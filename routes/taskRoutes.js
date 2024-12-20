@@ -25,7 +25,7 @@ router.post('/tasks', validateTask, async (req, res) => {
 
 //READ all
 router.get('/tasks', async (req, res) => {
-    const { limit = 10, offset = 0 } = req.query;
+    const { limit = 5, offset = 0 } = req.query;
 
     try {
         const [tasks] = await db.query('SELECT * FROM tasks LIMIT ? OFFSET ?', [parseInt(limit), parseInt(offset)]);
@@ -49,7 +49,7 @@ router.get('/tasks/user/:user_id', async (req, res) => {
     }
 });
 
-//UPDATE
+//UPDATE TASKS
 router.put('/tasks/:id', validateTask, async (req, res) => {
     const { id } = req.params;
     const { title, description, status } = req.body;
@@ -73,6 +73,34 @@ router.put('/tasks/:id', validateTask, async (req, res) => {
     }
 });
 
+//UPDATE TAAK STATUS
+router.put('/tasks/:id/status', async (req, res) => {
+    const { id } = req.params; 
+    const { status } = req.body;
+
+    if (!status || !['open', 'completed'].includes(status)) {
+        return res.status(400).json({ error: 'Status moet "open" of "completed" zijn.' });
+    }
+
+    try {
+        const [result] = await db.query(
+            'UPDATE tasks SET status = ? WHERE id = ?',
+            [status, id]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Taak niet gevonden.' });
+        }
+
+        res.status(200).json({ message: 'Taakstatus succesvol bijgewerkt.' });
+    } catch (error) {
+        console.error('Fout bij het updaten van taakstatus:', error);
+        res.status(500).json({ error: 'Er is een interne serverfout opgetreden.' });
+    }
+});
+
+
+
 //DELETE
 router.delete('/tasks/:id', async (req, res) => {
     const { id } = req.params;
@@ -88,5 +116,32 @@ router.delete('/tasks/:id', async (req, res) => {
         res.status(500).json({ error: 'Kon taak niet verwijderen.' });
     }
 });
+
+//FILTEREN
+router.get('/tasks/search', async (req, res) => {
+    const { title, status } = req.query;
+
+    let query = 'SELECT * FROM tasks WHERE 1=1';
+    const params = [];
+
+    if (title) {
+        query += ' AND title LIKE ?';
+        params.push(`%${title}%`);
+    }
+
+    if (status) {
+        query += ' AND status = ?';
+        params.push(status);
+    }
+
+    try {
+        const [tasks] = await db.query(query, params);
+        res.status(200).json(tasks);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Kon taken niet zoeken.' });
+    }
+});
+
 
 module.exports = router;

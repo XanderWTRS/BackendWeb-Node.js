@@ -24,8 +24,9 @@ router.post('/users', validateUser, async (req, res) => {
 
 //READ all
 router.get('/users', async (req, res) => {
+    const { limit = 5, offset = 0 } = req.query;
     try {
-        const [users] = await db.query('SELECT * FROM users');
+        const [users] = await db.query('SELECT * FROM users LIMIT ? OFFSET ?', [parseInt(limit), parseInt(offset)]);
         res.status(200).json(users);
     } catch (error) {
         console.error(error);
