@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../models/db');
-const {validateUser} = require('../middleware/validation');
+const {validateUser , validateTask} = require('../middleware/validation');
 
 //CREATE
 router.post('/users', validateUser, async (req, res) => {
@@ -12,10 +12,13 @@ router.post('/users', validateUser, async (req, res) => {
             'INSERT INTO users (first_name, last_name, email, phone_number) VALUES (?, ?, ?, ?)',
             [first_name, last_name, email, phone_number]
         );
-        res.status(201).json({ message: 'Gebruiker toegevoegd.', userId: result.insertId });
+        res.status(201).json({ message: 'Gebruiker succesvol toegevoegd.', userId: result.insertId });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Kon gebruiker niet toevoegen.' });
+        if (error.code === 'ER_DUP_ENTRY') {
+            return res.status(400).json({ error: 'E-mailadres is al in gebruik.' });
+        }
+        console.error('Fout bij het toevoegen van gebruiker:', error);
+        res.status(500).json({ error: 'Er is een interne fout opgetreden.' });
     }
 });
 

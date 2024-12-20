@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../models/db');
+const {validateUser , validateTask} = require('../middleware/validation');
 
 //CREATE
-router.post('/tasks', async (req, res) => {
+router.post('/tasks', validateTask, async (req, res) => {
     const { user_id, title, description, status } = req.body;
 
     if (!user_id || !title) {
@@ -49,7 +50,7 @@ router.get('/tasks/user/:user_id', async (req, res) => {
 });
 
 //UPDATE
-router.put('/tasks/:id', async (req, res) => {
+router.put('/tasks/:id', validateTask, async (req, res) => {
     const { id } = req.params;
     const { title, description, status } = req.body;
 
