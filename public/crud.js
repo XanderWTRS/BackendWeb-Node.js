@@ -192,26 +192,28 @@ async function fetchTasksForUser(userId) {
         taskList.innerHTML = '';
 
         tasks.forEach((task) => {
-            const li = document.createElement('li');
             const isCompleted = task.status === 'completed';
-            const completedAtText = isCompleted ? `Voltooid op: ${task.completed_at || 'Onbekend'}` : '';
-        
-            li.innerHTML = `
-                ${task.title} (${task.status}) 
-                ${completedAtText}
-                <button 
-                    onclick="updateTaskStatus(${task.id}, '${task.status}')"
-                    ${isCompleted ? 'disabled' : ''}>
-                    Wijzig status
-                </button>
+            const taskItem = document.createElement('li');
+            taskItem.innerHTML = `
+                <strong>${task.title}</strong> (${task.status})<br>
+                <p>Beschrijving: ${task.description || 'Geen beschrijving'}</p>
+                <div>
+                    <button 
+                        onclick='openEditTaskModal(${JSON.stringify(task).replace(/'/g, "&apos;")})'
+                        ${isCompleted ? 'disabled' : ''}>
+                        Aanpassen
+                    </button>
+                    <button onclick="deleteTask(${task.id})" style="background: red;">Verwijderen</button>
+                </div>
             `;
-            taskList.appendChild(li);
+            taskList.appendChild(taskItem);
         });
     } catch (error) {
         console.error(`Error fetching tasks for user ${userId}:`, error);
         alert('Er ging iets mis bij het ophalen van taken.');
     }
 }
+
 
 //VERWIJDER GEBRUIKER
 async function deleteUser(userId) {
@@ -231,4 +233,103 @@ async function deleteUser(userId) {
         alert('Er ging iets mis.');
     }
 }
+
+//TAAK BEWERKEN
+function openEditTaskModal(task) {
+    if (task.status === 'completed') {
+        alert('Een voltooide taak kan niet meer worden aangepast.');
+        return;
+    }
+
+    document.getElementById('edit-task-id').value = task.id;
+    document.getElementById('edit-task-title').value = task.title;
+    document.getElementById('edit-task-description').value = task.description || '';
+    populateUsersDropdown(task.user_id);
+
+    document.getElementById('edit-task-modal').classList.add('active');
+}
+
+function closeEditTaskModal() {
+    document.getElementById('edit-task-modal').classList.remove('active');
+}
+
+async function populateUsersDropdown(selectedUserId) {
+    const userSelect = document.getElementById('edit-task-user');
+    userSelect.innerHTML = '';
+    try {
+        const response = await fetch(`${API_BASE_URL}/users`);
+        const users = await response.json();
+
+        users.forEach(user => {
+            const option = document.createElement('option');
+            option.value = user.id;
+            option.textContent = `${user.first_name} ${user.last_name}`;
+            if (user.id === selectedUserId) option.selected = true;
+            userSelect.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Fout bij het ophalen van gebruikers:', error);
+        alert('Kon gebruikers niet laden.');
+    }
+}
+
+document.getElementById('edit-task-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const taskId = document.getElementById('edit-task-id').value;
+    const userId = document.getElementById('edit-task-user').value;
+    const title = document.getElementById('edit-task-title').value;
+    const description = document.getElementById('edit-task-description').value;
+
+    const updatedTask = {
+        user_id: parseInt(userId),
+        title,
+        description,
+    };
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/tasks/${taskId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updatedTask),
+        });
+
+        if (response.ok) {
+            alert('Taak succesvol aangepast!');
+            closeEditTaskModal();
+            fetchUsers(); 
+        } else {
+            const result = await response.json();
+            alert(`Fout: ${result.error || 'Kon taak niet aanpassen.'}`);
+        }
+    } catch (error) {
+        console.error('Fout bij het aanpassen van taak:', error);
+        alert('Er ging iets mis bij het aanpassen.');
+    }
+});
+
+//TAAK VERWIJDEREN
+async function deleteTask(taskId) {
+    if (!confirm('Weet je zeker dat je deze taak wilt verwijderen?')) return;
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/tasks/${taskId}`, {
+            method: 'DELETE',
+        });
+
+        if (response.ok) {
+            alert('Taak succesvol verwijderd!');
+            fetchUsers();
+        } else {
+            const result = await response.json();
+            alert(`Fout: ${result.error || 'Kon taak niet verwijderen.'}`);
+        }
+    } catch (error) {
+        console.error('Fout bij het verwijderen van taak:', error);
+        alert('Er ging iets mis bij het verwijderen.');
+    }
+}
+
 fetchUsers();

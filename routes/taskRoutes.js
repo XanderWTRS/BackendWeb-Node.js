@@ -52,7 +52,7 @@ router.get('/tasks/user/:user_id', async (req, res) => {
 //UPDATE TASKS
 router.put('/tasks/:id', validateTask, async (req, res) => {
     const { id } = req.params;
-    const { title, description, status } = req.body;
+    const { user_id, title, description, status } = req.body;
 
     if (!title) {
         return res.status(400).json({ error: 'Titel is verplicht.' });
@@ -60,8 +60,8 @@ router.put('/tasks/:id', validateTask, async (req, res) => {
 
     try {
         const [result] = await db.query(
-            'UPDATE tasks SET title = ?, description = ?, status = ? WHERE id = ?',
-            [title, description || '', status || 'open', id]
+            'UPDATE tasks SET user_id = ?, title = ?, description = ?, status = ? WHERE id = ?',
+            [user_id, title, description || '', status || 'open', id]
         );
         if (result.affectedRows === 0) {
             return res.status(404).json({ error: 'Taak niet gevonden.' });

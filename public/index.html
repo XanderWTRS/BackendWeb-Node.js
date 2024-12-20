@@ -76,6 +76,20 @@
         <div id="task-error" style="color: red;"></div>
     </section>
 
+    <div id="edit-task-modal" class="modal">
+        <form id="edit-task-form">
+            <input type="hidden" id="edit-task-id">
+            <label for="edit-task-user">Gebruiker:</label>
+            <select id="edit-task-user" required></select>
+            <label for="edit-task-title">Titel:</label>
+            <input type="text" id="edit-task-title" placeholder="Titel" required>
+            <label for="edit-task-description">Beschrijving:</label>
+            <textarea id="edit-task-description" placeholder="Beschrijving"></textarea>
+            <button type="submit">Opslaan</button>
+            <button type="button" class="close-modal" onclick="closeEditTaskModal()">Annuleren</button>
+        </form>
+    </div>
+
     <section id="users-list">
         <h2>Alle gebruikers en hun taken</h2>
         <button onclick="fetchUsers()">Ververs lijst</button>
