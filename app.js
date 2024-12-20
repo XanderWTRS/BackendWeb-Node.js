@@ -13,9 +13,6 @@ const taskRoutes = require('./routes/taskRoutes');
     }
 })();
 
-const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => console.log(`Server draait op poort ${PORT}`));
-
 const app = express();
 app.use(bodyParser.json());
 
@@ -30,3 +27,6 @@ try {
 } catch (err) {
     console.error('Error setting up task routes:', err);
 }
+
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, () => console.log(`Server draait op poort ${PORT}`));

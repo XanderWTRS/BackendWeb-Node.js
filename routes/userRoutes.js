@@ -1,17 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../models/db');
+const {validateUser} = require('../middleware/validation');
 
 //CREATE
-router.post('/users', async (req, res) => {
-    const { name, email } = req.body;
-
-    if (!name || !email) {
-        return res.status(400).json({ error: 'Naam en e-mail zijn verplicht.' });
-    }
+router.post('/users', validateUser, async (req, res) => {
+    const { first_name, last_name, email, phone_number } = req.body;
 
     try {
-        const [result] = await db.query('INSERT INTO users (name, email) VALUES (?, ?)', [name, email]);
+        const [result] = await db.query(
+            'INSERT INTO users (first_name, last_name, email, phone_number) VALUES (?, ?, ?, ?)',
+            [first_name, last_name, email, phone_number]
+        );
         res.status(201).json({ message: 'Gebruiker toegevoegd.', userId: result.insertId });
     } catch (error) {
         console.error(error);
@@ -47,16 +47,15 @@ router.get('/users/:id', async (req, res) => {
 });
 
 //WIJZIG
-router.put('/users/:id', async (req, res) => {
+router.put('/users/:id', validateUser, async (req, res) => {
     const { id } = req.params;
-    const { name, email } = req.body;
-
-    if (!name || !email) {
-        return res.status(400).json({ error: 'Naam en e-mail zijn verplicht.' });
-    }
+    const { first_name, last_name, email, phone_number } = req.body;
 
     try {
-        const [result] = await db.query('UPDATE users SET name = ?, email = ? WHERE id = ?', [name, email, id]);
+        const [result] = await db.query(
+            'UPDATE users SET first_name = ?, last_name = ?, email = ?, phone_number = ? WHERE id = ?',
+            [first_name, last_name, email, phone_number, id]
+        );
         if (result.affectedRows === 0) {
             return res.status(404).json({ error: 'Gebruiker niet gevonden.' });
         }
@@ -66,6 +65,7 @@ router.put('/users/:id', async (req, res) => {
         res.status(500).json({ error: 'Kon gebruiker niet bijwerken.' });
     }
 });
+
 
 //DELETE
 router.delete('/users/:id', async (req, res) => {
