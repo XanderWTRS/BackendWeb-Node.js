@@ -2,6 +2,7 @@ const db = require('./models/db');
 const express = require('express');
 const bodyParser = require('body-parser');
 const userRoutes = require('./routes/userRoutes');
+const taskRoutes = require('./routes/taskRoutes');
 
 (async () => {
     try {
@@ -12,10 +13,20 @@ const userRoutes = require('./routes/userRoutes');
     }
 })();
 
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, () => console.log(`Server draait op poort ${PORT}`));
+
 const app = express();
 app.use(bodyParser.json());
 
-app.use('/api', userRoutes);
+try {
+    app.use('/api', userRoutes);
+} catch (err) {
+    console.error('Error setting up user routes:', err);
+}
 
-const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => console.log(`Server draait op poort ${PORT}`));
+try {
+    app.use('/api', taskRoutes);
+} catch (err) {
+    console.error('Error setting up task routes:', err);
+}
