@@ -1,5 +1,8 @@
 const API_BASE_URL = 'http://localhost:4000/api';
 
+let currentPage = 1;
+const USERS_PER_PAGE = 6;
+
 //NIEUWE GEBRUIKER
 document.getElementById('user-form').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -143,21 +146,25 @@ async function updateTaskStatus(taskId, currentStatus) {
     }
 }
 
-
 //ALLE GEKOPPELDE TAKEN
 async function fetchUsers() {
+    const offset = (currentPage - 1) * USERS_PER_PAGE;
     try {
-        const response = await fetch(`${API_BASE_URL}/users`);
+        console.log(`Fetching users with limit=${USERS_PER_PAGE} and offset=${offset}`);
+        const response = await fetch(`${API_BASE_URL}/users?limit=${USERS_PER_PAGE}&offset=${offset}`);
+        console.log('Response status:', response.status);
+
         if (!response.ok) {
-            throw new Error('Fout bij het ophalen van gebruikers.');
+            throw new Error(`Fout bij het ophalen van gebruikers: ${response.status}`);
         }
 
         const users = await response.json();
+        console.log('Gebruikers ontvangen:', users);
 
         const userList = document.getElementById('user-list');
         const taskUserIdSelect = document.getElementById('task-user-id');
-        userList.innerHTML = ''; 
-        taskUserIdSelect.innerHTML = ''; 
+        userList.innerHTML = '';
+        taskUserIdSelect.innerHTML = '';
 
         users.forEach((user) => {
             const option = document.createElement('option');
@@ -176,11 +183,14 @@ async function fetchUsers() {
 
             fetchTasksForUser(user.id);
         });
+
+        renderPaginationButtons();
     } catch (error) {
         console.error('Fout bij ophalen gebruikers:', error);
         alert('Er ging iets mis bij het ophalen van gebruikers. Controleer de server.');
     }
 }
+
 
 //TAAK VOOR GEBRUIKER
 async function fetchTasksForUser(userId) {
@@ -329,6 +339,28 @@ async function deleteTask(taskId) {
     } catch (error) {
         console.error('Fout bij het verwijderen van taak:', error);
         alert('Er ging iets mis bij het verwijderen.');
+    }
+}
+
+//PAGINATIE
+function renderPaginationButtons() {
+    const paginationContainer = document.getElementById('pagination');
+    paginationContainer.innerHTML = `
+        <button onclick="prevPage()" ${currentPage === 1 ? 'disabled' : ''}>Vorige</button>
+        <span>Pagina ${currentPage}</span>
+        <button onclick="nextPage()">Volgende</button>
+    `;
+}
+
+function nextPage() {
+    currentPage++;
+    fetchUsers();
+}
+
+function prevPage() {
+    if (currentPage > 1) {
+        currentPage--;
+        fetchUsers();
     }
 }
 
