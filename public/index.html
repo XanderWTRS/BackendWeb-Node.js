@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Management CRUD</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Task Management CRUD</h1>
+
+    <section id="create-user">
+        <h2>Voeg een nieuwe gebruiker toe</h2>
+        <form id="user-form">
+            <label for="first-name">Voornaam:</label>
+            <input type="text" id="first-name" placeholder="Voornaam" required><br>
+
+            <label for="last-name">Achternaam:</label>
+            <input type="text" id="last-name" placeholder="Achternaam" required><br>
+
+            <label for="email">E-mail:</label>
+            <input type="email" id="email" placeholder="voornaamachternaam@example.com" required><br>
+
+            <label for="phone-number">Telefoonnummer:</label>
+            <input type="text" id="phone-number" placeholder="+32 123 45 67 89" required><br>
+
+            <button type="submit">Gebruiker toevoegen</button>
+        </form>
+    </section>
+
+    <section id="create-task">
+        <h2>Voeg een nieuwe taak toe</h2>
+        <form id="task-form">
+            <label for="task-user-id">Gebruiker ID:</label>
+            <select id="task-user-id" required></select><br>
+
+            <label for="task-title">Titel:</label>
+            <input type="text" id="task-title" placeholder="Bijvoorbeeld: Maak rapport" required><br>
+
+            <label for="task-description">Beschrijving:</label>
+            <textarea id="task-description" placeholder="Optionele beschrijving"></textarea><br>
+
+            <label for="task-status">Status:</label>
+            <select id="task-status">
+                <option value="open">Open</option>
+                <option value="completed">Voltooid</option>
+            </select><br>
+
+            <button type="submit">Taak toevoegen</button>
+        </form>
+    </section>
+
+    <section id="users-list">
+        <h2>Alle gebruikers en hun taken</h2>
+        <button onclick="fetchUsers()">Ververs lijst</button>
+        <ul id="user-list"></ul>
+    </section>
+
+    <script src="crud.js"></script>
+</body>
+</html>
