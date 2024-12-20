@@ -75,27 +75,39 @@ router.put('/tasks/:id', validateTask, async (req, res) => {
 
 //UPDATE TAAK STATUS
 router.put('/tasks/:id/status', async (req, res) => {
-    const { id } = req.params; 
+    const { id } = req.params;
     const { status } = req.body;
 
-    if (!status || !['open', 'completed'].includes(status)) {
-        return res.status(400).json({ error: 'Status moet "open" of "completed" zijn.' });
+    if (!['open', 'completed'].includes(status)) {
+        return res.status(400).json({ error: 'Ongeldige statuswaarde. Moet "open" of "completed" zijn.' });
     }
-
     try {
-        const [result] = await db.query(
-            'UPDATE tasks SET status = ? WHERE id = ?',
-            [status, id]
-        );
+        const [task] = await db.query('SELECT status FROM tasks WHERE id = ?', [id]);
 
-        if (result.affectedRows === 0) {
+        if (!task.length) {
             return res.status(404).json({ error: 'Taak niet gevonden.' });
         }
 
+        const currentStatus = task[0].status;
+
+        if (currentStatus === 'completed' && status === 'open') {
+            return res.status(400).json({ error: 'Een voltooide taak kan niet opnieuw op "open" worden gezet.' });
+        }
+
+        let completedAt = null;
+        if (status === 'completed') {
+            completedAt = new Date();
+        }
+
+        await db.query(
+            'UPDATE tasks SET status = ?, completed_at = ? WHERE id = ?',
+            [status, completedAt, id]
+        );
+
         res.status(200).json({ message: 'Taakstatus succesvol bijgewerkt.' });
     } catch (error) {
-        console.error('Fout bij het updaten van taakstatus:', error);
-        res.status(500).json({ error: 'Er is een interne serverfout opgetreden.' });
+        console.error('Fout bij het bijwerken van taakstatus:', error);
+        res.status(500).json({ error: 'Er ging iets mis bij het bijwerken van de taakstatus.' });
     }
 });
 

@@ -3,12 +3,16 @@ const db = require('../models/db');
 const validateUser = async (req, res, next) => {
     const { first_name, last_name, email, phone_number } = req.body;
 
-    if (!first_name || typeof first_name !== 'string') {
-        return res.status(400).json({ error: 'Voornaam is verplicht en moet een string zijn.' });
+    if (!first_name || typeof first_name !== 'string' || /\d/.test(first_name)) {
+        return res.status(400).json({ 
+            error: 'Voornaam is verplicht, moet een string zijn en mag geen cijfers bevatten.' 
+        });
     }
 
-    if (!last_name || typeof last_name !== 'string') {
-        return res.status(400).json({ error: 'Achternaam is verplicht en moet een string zijn.' });
+    if (!last_name || typeof last_name !== 'string' || /\d/.test(last_name)) {
+        return res.status(400).json({ 
+            error: 'Achternaam is verplicht, moet een string zijn en mag geen cijfers bevatten.' 
+        });
     }
 
     if (!email || typeof email !== 'string' || !email.includes('@') || !email.includes('.')) {
@@ -16,7 +20,9 @@ const validateUser = async (req, res, next) => {
     }
 
     if (!phone_number || typeof phone_number !== 'string' || !/^\+32[0-9]{9}$/.test(phone_number)) {
-        return res.status(400).json({ error: 'Telefoonnummer is verplicht en moet beginnen met +32 gevolgd door 9 cijfers.' });
+        return res.status(400).json({ 
+            error: 'Telefoonnummer is verplicht en moet beginnen met +32 gevolgd door 9 cijfers.' 
+        });
     }
 
     try {
@@ -32,9 +38,8 @@ const validateUser = async (req, res, next) => {
     next();
 };
 
-
 const validateTask = (req, res, next) => {
-    const { user_id, title, status } = req.body;
+    const { user_id, title, status, start_date, end_date } = req.body;
 
     if (!user_id || typeof user_id !== 'number') {
         return res.status(400).json({ error: 'Een geldig gebruiker-ID is verplicht.' });
@@ -48,7 +53,24 @@ const validateTask = (req, res, next) => {
         return res.status(400).json({ error: 'Status moet "open" of "completed" zijn.' });
     }
 
+    if (start_date && end_date) {
+        const start = new Date(start_date);
+        const end = new Date(end_date);
+
+        if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+            return res.status(400).json({ 
+                error: 'Startdatum en einddatum moeten geldige datums zijn.' 
+            });
+        }
+
+        if (end <= start) {
+            return res.status(400).json({ 
+                error: 'Einddatum moet na de startdatum vallen.' 
+            });
+        }
+    }
+
     next();
 };
 
-module.exports = { validateUser , validateTask };
+module.exports = { validateUser, validateTask };

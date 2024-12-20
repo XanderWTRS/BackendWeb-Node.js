@@ -120,8 +120,6 @@ document.getElementById('task-form').addEventListener('submit', async (e) => {
 async function updateTaskStatus(taskId, currentStatus) {
     const newStatus = currentStatus === 'open' ? 'completed' : 'open';
 
-    console.log('Task ID:', taskId, 'Nieuwe status:', newStatus); 
-
     try {
         const response = await fetch(`${API_BASE_URL}/tasks/${taskId}/status`, {
             method: 'PUT',
@@ -131,18 +129,20 @@ async function updateTaskStatus(taskId, currentStatus) {
             body: JSON.stringify({ status: newStatus }),
         });
 
+        const result = await response.json();
+
         if (response.ok) {
             alert('Taakstatus succesvol bijgewerkt!');
-            fetchUsers(); 
+            fetchUsers();
         } else {
-            const result = await response.json();
-            alert(`Fout: ${result.error || 'Kon de taakstatus niet bijwerken.'}`);
+            alert(`Fout: ${result.error}`);
         }
     } catch (error) {
         console.error(`Fout bij het updaten van taak ${taskId}:`, error);
         alert('Er ging iets mis bij het updaten van de taakstatus.');
     }
 }
+
 
 //ALLE GEKOPPELDE TAKEN
 async function fetchUsers() {
@@ -193,9 +193,15 @@ async function fetchTasksForUser(userId) {
 
         tasks.forEach((task) => {
             const li = document.createElement('li');
+            const isCompleted = task.status === 'completed';
+            const completedAtText = isCompleted ? `Voltooid op: ${task.completed_at || 'Onbekend'}` : '';
+        
             li.innerHTML = `
-                ${task.title} (${task.status})
-                <button onclick="updateTaskStatus(${task.id}, '${task.status}')">
+                ${task.title} (${task.status}) 
+                ${completedAtText}
+                <button 
+                    onclick="updateTaskStatus(${task.id}, '${task.status}')"
+                    ${isCompleted ? 'disabled' : ''}>
                     Wijzig status
                 </button>
             `;

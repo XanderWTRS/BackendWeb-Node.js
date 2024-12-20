@@ -50,3 +50,8 @@ li {
     border-radius: 5px;
 }
 
+button[disabled] {
+    background-color: grey;
+    color: white;
+    cursor: not-allowed;
+}
