@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Task Management CRUD</title>
+    <title>Task Management</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -22,11 +22,35 @@
             <input type="email" id="email" placeholder="voornaamachternaam@example.com" required><br>
 
             <label for="phone-number">Telefoonnummer:</label>
-            <input type="text" id="phone-number" placeholder="+32 123 45 67 89" required><br>
+            <input type="text" id="phone-number" placeholder="+32 123 456 789" required><br>
 
             <button type="submit">Gebruiker toevoegen</button>
         </form>
+        <div id="user-error" style="color: red;"></div>
     </section>
+
+    <section id="update-user">
+        <h2>Update een gebruiker</h2>
+        <form id="update-user-form">
+            <label for="update-user-id">Gebruiker ID:</label>
+            <input type="number" id="update-user-id" placeholder="1" required><br>
+    
+            <label for="update-first-name">Voornaam:</label>
+            <input type="text" id="update-first-name" placeholder="Voornaam" required><br>
+    
+            <label for="update-last-name">Achternaam:</label>
+            <input type="text" id="update-last-name" placeholder="Achternaam" required><br>
+    
+            <label for="update-email">E-mail:</label>
+            <input type="email" id="update-email" placeholder="voornaamachternaam@example.com" required><br>
+    
+            <label for="update-phone-number">Telefoonnummer:</label>
+            <input type="text" id="update-phone-number" placeholder="+32 123 456 789" required><br>
+    
+            <button type="submit">Gebruiker updaten</button>
+        </form>
+    </section>
+    
 
     <section id="create-task">
         <h2>Voeg een nieuwe taak toe</h2>
@@ -48,6 +72,7 @@
 
             <button type="submit">Taak toevoegen</button>
         </form>
+        <div id="task-error" style="color: red;"></div>
     </section>
 
     <section id="users-list">
