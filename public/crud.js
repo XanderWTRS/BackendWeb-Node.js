@@ -2,6 +2,87 @@ const API_BASE_URL = 'http://localhost:4000/api';
 
 let currentPage = 1;
 const USERS_PER_PAGE = 6;
+let allUsers = []; 
+
+//AUTOCOMPLETE
+async function fetchAllUsers() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/users?limit=1000`);
+        if (!response.ok) {
+            throw new Error('Fout bij het ophalen van gebruikers.');
+        }
+        allUsers = await response.json();
+    } catch (error) {
+        console.error('Fout bij het ophalen van gebruikers:', error);
+    }
+}
+
+function filterUsers(searchTerm) {
+    return allUsers.filter(user =>
+        `${user.first_name} ${user.last_name}`.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+}
+
+function showFilteredUsers(filteredUsers) {
+    const resultsContainer = document.getElementById('user-search-results');
+    resultsContainer.innerHTML = ''; 
+
+    filteredUsers.forEach(user => {
+        const li = document.createElement('li');
+        li.textContent = `${user.first_name} ${user.last_name}`;
+        li.dataset.userId = user.id; 
+        li.addEventListener('click', () => selectUser(user));
+        resultsContainer.appendChild(li);
+    });
+}
+
+function selectUser(user) {
+    const searchInput = document.getElementById('task-user-search');
+    searchInput.value = `${user.first_name} ${user.last_name}`; 
+    searchInput.dataset.userId = user.id; 
+    document.getElementById('user-search-results').innerHTML = ''; 
+}
+
+document.getElementById('task-user-search').addEventListener('input', (e) => {
+    const searchTerm = e.target.value;
+    if (searchTerm.length > 0) {
+        const filteredUsers = filterUsers(searchTerm);
+        showFilteredUsers(filteredUsers);
+    } else {
+        document.getElementById('user-search-results').innerHTML = ''; 
+    }
+});
+
+document.getElementById('edit-task-user-search').addEventListener('input', (e) => {
+    const searchTerm = e.target.value;
+
+    if (searchTerm.length > 0) {
+        const filteredUsers = filterUsers(searchTerm); // Use the same filterUsers function
+        showEditFilteredUsers(filteredUsers);
+    } else {
+        document.getElementById('edit-user-search-results').innerHTML = ''; // Clear results if input is empty
+    }
+});
+
+function showEditFilteredUsers(filteredUsers) {
+    const resultsContainer = document.getElementById('edit-user-search-results');
+    resultsContainer.innerHTML = ''; // Clear previous results
+
+    filteredUsers.forEach(user => {
+        const li = document.createElement('li');
+        li.textContent = `${user.first_name} ${user.last_name}`;
+        li.dataset.userId = user.id; // Store the user ID
+        li.addEventListener('click', () => selectEditUser(user)); // Set click listener
+        resultsContainer.appendChild(li);
+    });
+}
+
+function selectEditUser(user) {
+    const searchInput = document.getElementById('edit-task-user-search');
+    searchInput.value = `${user.first_name} ${user.last_name}`; // Set selected user's name in the input
+    searchInput.dataset.userId = user.id; // Store user ID in dataset
+    document.getElementById('edit-user-search-results').innerHTML = ''; // Clear results
+}
 
 //NIEUWE GEBRUIKER
 document.getElementById('user-form').addEventListener('submit', async (e) => {
@@ -32,6 +113,7 @@ document.getElementById('user-form').addEventListener('submit', async (e) => {
         if (response.ok) {
             alert('Gebruiker succesvol toegevoegd!');
             fetchUsers(); 
+            fetchAllUsers()
         } else {
             console.error('Fout van de server:', result.error);
             alert(`Fout: ${result.error}`);
@@ -85,7 +167,7 @@ document.getElementById('update-user-form').addEventListener('submit', async (e)
 document.getElementById('task-form').addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const userId = document.getElementById('task-user-id').value;
+    const userId = document.getElementById('task-user-search').dataset.userId;
     const title = document.getElementById('task-title').value;
     const description = document.getElementById('task-description').value;
     const status = document.getElementById('task-status').value;
@@ -150,28 +232,17 @@ async function updateTaskStatus(taskId, currentStatus) {
 async function fetchUsers() {
     const offset = (currentPage - 1) * USERS_PER_PAGE;
     try {
-        console.log(`Fetching users with limit=${USERS_PER_PAGE} and offset=${offset}`);
         const response = await fetch(`${API_BASE_URL}/users?limit=${USERS_PER_PAGE}&offset=${offset}`);
-        console.log('Response status:', response.status);
-
         if (!response.ok) {
             throw new Error(`Fout bij het ophalen van gebruikers: ${response.status}`);
         }
 
         const users = await response.json();
-        console.log('Gebruikers ontvangen:', users);
 
         const userList = document.getElementById('user-list');
-        const taskUserIdSelect = document.getElementById('task-user-id');
-        userList.innerHTML = '';
-        taskUserIdSelect.innerHTML = '';
+        userList.innerHTML = ''; // Clear list
 
         users.forEach((user) => {
-            const option = document.createElement('option');
-            option.value = user.id;
-            option.textContent = `${user.first_name} ${user.last_name}`;
-            taskUserIdSelect.appendChild(option);
-
             const li = document.createElement('li');
             li.innerHTML = `
                 <strong>${user.first_name} ${user.last_name}</strong> (${user.email})<br>
@@ -187,7 +258,7 @@ async function fetchUsers() {
         renderPaginationButtons();
     } catch (error) {
         console.error('Fout bij ophalen gebruikers:', error);
-        alert('Er ging iets mis bij het ophalen van gebruikers. Controleer de server.');
+        alert('Er ging iets mis bij het ophalen van gebruikers.');
     }
 }
 
@@ -212,6 +283,11 @@ async function fetchTasksForUser(userId) {
                         onclick='openEditTaskModal(${JSON.stringify(task).replace(/'/g, "&apos;")})'
                         ${isCompleted ? 'disabled' : ''}>
                         Aanpassen
+                    </button>
+                    <button 
+                        onclick='markTaskComplete(${task.id})'
+                        ${isCompleted ? 'disabled' : ''}>
+                        Complete
                     </button>
                     <button onclick="deleteTask(${task.id})" style="background: red;">Verwijderen</button>
                 </div>
@@ -283,11 +359,35 @@ async function populateUsersDropdown(selectedUserId) {
     }
 }
 
+//TAAK VOLTOOIEN
+async function markTaskComplete(taskId) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/tasks/${taskId}/status`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ status: 'completed' }),
+        });
+
+        if (response.ok) {
+            alert('Taak succesvol op "completed" gezet!');
+            fetchUsers();
+        } else {
+            const result = await response.json();
+            alert(`Fout: ${result.error || 'Kon taak niet op "completed" zetten.'}`);
+        }
+    } catch (error) {
+        console.error('Fout bij het voltooien van taak:', error);
+        alert('Er ging iets mis bij het voltooien van de taak.');
+    }
+}
+
 document.getElementById('edit-task-form').addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const taskId = document.getElementById('edit-task-id').value;
-    const userId = document.getElementById('edit-task-user').value;
+    const userId = document.getElementById('edit-task-user-search').dataset.userId;
     const title = document.getElementById('edit-task-title').value;
     const description = document.getElementById('edit-task-description').value;
 
@@ -364,4 +464,5 @@ function prevPage() {
     }
 }
 
+fetchAllUsers();
 fetchUsers();

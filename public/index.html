@@ -56,8 +56,9 @@
     <section id="create-task">
         <h2>Voeg een nieuwe taak toe</h2>
         <form id="task-form">
-            <label for="task-user-id">Gebruiker ID:</label>
-            <select id="task-user-id" required></select>
+            <label for="task-user-search">Zoek gebruiker:</label>
+            <input type="text" id="task-user-search" placeholder="Typ de naam van de gebruiker" autocomplete="off">
+            <ul id="user-search-results" class="dropdown"></ul>
 
             <label for="task-title">Titel:</label>
             <input type="text" id="task-title" placeholder="Bijvoorbeeld: Maak rapport" required>
@@ -79,8 +80,9 @@
     <div id="edit-task-modal" class="modal">
         <form id="edit-task-form">
             <input type="hidden" id="edit-task-id">
-            <label for="edit-task-user">Gebruiker:</label>
-            <select id="edit-task-user" required></select>
+            <label for="edit-task-user-search">Zoek gebruiker:</label>
+            <input type="text" id="edit-task-user-search" placeholder="Typ de naam van de gebruiker" autocomplete="off">
+            <ul id="edit-user-search-results"></ul>
             <label for="edit-task-title">Titel:</label>
             <input type="text" id="edit-task-title" placeholder="Titel" required>
             <label for="edit-task-description">Beschrijving:</label>

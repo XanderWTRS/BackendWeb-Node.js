@@ -25,10 +25,8 @@ router.post('/tasks', validateTask, async (req, res) => {
 
 //READ all
 router.get('/tasks', async (req, res) => {
-    const { limit = 5, offset = 0 } = req.query;
-
     try {
-        const [tasks] = await db.query('SELECT * FROM tasks LIMIT ? OFFSET ?', [parseInt(limit), parseInt(offset)]);
+        const [tasks] = await db.query('SELECT * FROM tasks');
         res.status(200).json(tasks);
     } catch (error) {
         console.error(error);
