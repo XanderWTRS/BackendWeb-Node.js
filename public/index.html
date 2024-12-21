@@ -15,42 +15,64 @@
             <form id="user-form">
                 <label for="first-name">Voornaam:</label>
                 <input type="text" id="first-name" placeholder="Voornaam" required>
-
+        
                 <label for="last-name">Achternaam:</label>
                 <input type="text" id="last-name" placeholder="Achternaam" required>
-
+        
                 <label for="email">E-mail:</label>
                 <input type="email" id="email" placeholder="voornaamachternaam@example.com" required>
-
+        
                 <label for="phone-number">Telefoonnummer:</label>
                 <input type="text" id="phone-number" placeholder="+32 123 456 789" required>
-
+        
+                <label for="age">Leeftijd:</label>
+                <input type="number" id="age" placeholder="Bijv. 25" required>
+        
+                <label for="password">Wachtwoord:</label>
+                <input type="password" id="password" placeholder="Wachtwoord" required>
+        
+                <label for="is-admin">
+                    <input type="checkbox" id="is-admin"> Admin gebruiker?
+                </label>
+        
                 <button type="submit">Gebruiker toevoegen</button>
             </form>
             <div id="user-error" style="color: red;"></div>
         </section>
+        
 
         <section id="update-user">
             <h2>Update een gebruiker</h2>
             <form id="update-user-form">
                 <label for="update-user-id">Gebruiker ID:</label>
                 <input type="number" id="update-user-id" placeholder="1" required>
-        
+                
                 <label for="update-first-name">Voornaam:</label>
                 <input type="text" id="update-first-name" placeholder="Voornaam" required>
-        
+                
                 <label for="update-last-name">Achternaam:</label>
                 <input type="text" id="update-last-name" placeholder="Achternaam" required>
-        
+                
                 <label for="update-email">E-mail:</label>
                 <input type="email" id="update-email" placeholder="voornaamachternaam@example.com" required>
-        
+                
                 <label for="update-phone-number">Telefoonnummer:</label>
                 <input type="text" id="update-phone-number" placeholder="+32 123 456 789" required>
         
+                <label for="update-age">Leeftijd:</label>
+                <input type="number" id="update-age" placeholder="Bijv. 25" required>
+        
+                <label for="update-password">Wachtwoord:</label>
+                <input type="password" id="update-password" placeholder="Wachtwoord">
+        
+                <label for="update-is-admin">
+                    <input type="checkbox" id="update-is-admin"> Admin gebruiker?
+                </label>
+                
                 <button type="submit">Gebruiker updaten</button>
             </form>
         </section>
+        
     </div>
 
     <section id="create-task">

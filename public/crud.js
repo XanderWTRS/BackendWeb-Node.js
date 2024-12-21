@@ -92,12 +92,18 @@ document.getElementById('user-form').addEventListener('submit', async (e) => {
     const lastName = document.getElementById('last-name').value;
     const email = document.getElementById('email').value;
     const phoneNumber = document.getElementById('phone-number').value;
+    const age = parseInt(document.getElementById('age').value, 10);
+    const password = document.getElementById('password').value;
+    const isAdmin = document.getElementById('is-admin').checked ? 1 : 0;
 
     const userData = {
         first_name: firstName,
         last_name: lastName,
         email,
         phone_number: phoneNumber,
+        age,
+        password,
+        isAdmin,
     };
 
     try {
@@ -113,7 +119,7 @@ document.getElementById('user-form').addEventListener('submit', async (e) => {
         if (response.ok) {
             alert('Gebruiker succesvol toegevoegd!');
             fetchUsers(); 
-            fetchAllUsers()
+            fetchAllUsers();
         } else {
             console.error('Fout van de server:', result.error);
             alert(`Fout: ${result.error}`);
@@ -133,12 +139,18 @@ document.getElementById('update-user-form').addEventListener('submit', async (e)
     const lastName = document.getElementById('update-last-name').value;
     const email = document.getElementById('update-email').value;
     const phoneNumber = document.getElementById('update-phone-number').value;
+    const age = parseInt(document.getElementById('update-age').value, 10);
+    const password = document.getElementById('update-password').value;
+    const isAdmin = document.getElementById('update-is-admin').checked ? 1 : 0;
 
     const updatedData = {
         first_name: firstName,
         last_name: lastName,
         email,
         phone_number: phoneNumber,
+        age,
+        password,
+        isAdmin,
     };
 
     try {
@@ -230,7 +242,7 @@ async function updateTaskStatus(taskId, currentStatus) {
 
 //ALLE GEKOPPELDE TAKEN
 async function fetchUsers() {
-    const offset = (currentPage - 1) * USERS_PER_PAGE;
+    const offset = (currentPage - 1) * USERS_PER_PAGE; // Bereken offset op basis van de huidige pagina
     try {
         const response = await fetch(`${API_BASE_URL}/users?limit=${USERS_PER_PAGE}&offset=${offset}`);
         if (!response.ok) {
@@ -240,27 +252,37 @@ async function fetchUsers() {
         const users = await response.json();
 
         const userList = document.getElementById('user-list');
-        userList.innerHTML = ''; // Clear list
+        userList.innerHTML = ''; // Leeg de lijst voor nieuwe inhoud
 
         users.forEach((user) => {
             const li = document.createElement('li');
             li.innerHTML = `
                 <strong>${user.first_name} ${user.last_name}</strong> (${user.email})<br>
                 Telefoon: ${user.phone_number}<br>
+                Leeftijd: ${user.age}<br>
+                Admin: ${user.isAdmin ? 'Ja' : 'Nee'}<br>
                 <button onclick="deleteUser(${user.id})">Verwijder gebruiker</button>
-                <ul id="tasks-for-user-${user.id}"></ul>
             `;
+
+            // Maak een ul voor de taken van de gebruiker
+            const taskList = document.createElement('ul');
+            taskList.id = `tasks-for-user-${user.id}`;
+            li.appendChild(taskList);
+
             userList.appendChild(li);
 
+            // Haal de taken voor de gebruiker op
             fetchTasksForUser(user.id);
         });
 
-        renderPaginationButtons();
+        renderPaginationButtons(); // Render de paginatieknoppen
     } catch (error) {
         console.error('Fout bij ophalen gebruikers:', error);
         alert('Er ging iets mis bij het ophalen van gebruikers.');
     }
 }
+
+
 
 
 //TAAK VOOR GEBRUIKER

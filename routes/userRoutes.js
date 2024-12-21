@@ -1,16 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../models/db');
-const {validateUser , validateTask} = require('../middleware/validation');
+const { validateUser, validateTask } = require('../middleware/validation');
 
 //CREATE
 router.post('/users', validateUser, async (req, res) => {
-    const { first_name, last_name, email, phone_number } = req.body;
+    const { first_name, last_name, email, phone_number, age, password, isAdmin } = req.body;
 
     try {
         const [result] = await db.query(
-            'INSERT INTO users (first_name, last_name, email, phone_number) VALUES (?, ?, ?, ?)',
-            [first_name, last_name, email, phone_number]
+            'INSERT INTO users (first_name, last_name, email, phone_number, age, password, isAdmin) VALUES (?, ?, ?, ?, ?, ?, ?)',
+            [first_name, last_name, email, phone_number, age, password, isAdmin]
         );
         res.status(201).json({ message: 'Gebruiker succesvol toegevoegd.', userId: result.insertId });
     } catch (error) {
@@ -50,15 +50,15 @@ router.get('/users/:id', async (req, res) => {
     }
 });
 
-//WIJZIG
+//UPDATE
 router.put('/users/:id', validateUser, async (req, res) => {
     const { id } = req.params;
-    const { first_name, last_name, email, phone_number } = req.body;
+    const { first_name, last_name, email, phone_number, age, password, isAdmin } = req.body;
 
     try {
         const [result] = await db.query(
-            'UPDATE users SET first_name = ?, last_name = ?, email = ?, phone_number = ? WHERE id = ?',
-            [first_name, last_name, email, phone_number, id]
+            'UPDATE users SET first_name = ?, last_name = ?, email = ?, phone_number = ?, age = ?, password = ?, isAdmin = ? WHERE id = ?',
+            [first_name, last_name, email, phone_number, age, password, isAdmin, id]
         );
         if (result.affectedRows === 0) {
             return res.status(404).json({ error: 'Gebruiker niet gevonden.' });
@@ -69,7 +69,6 @@ router.put('/users/:id', validateUser, async (req, res) => {
         res.status(500).json({ error: 'Kon gebruiker niet bijwerken.' });
     }
 });
-
 
 //DELETE
 router.delete('/users/:id', async (req, res) => {
