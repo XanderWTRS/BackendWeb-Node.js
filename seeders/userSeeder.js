@@ -10,7 +10,7 @@ async function seedUsers() {
         phone_number: `+32${faker.number.int({ min: 400000000, max: 499999999 })}`,
         age: faker.number.int({ min: 18, max: 65 }),
         password: bcrypt.hashSync('password123', 10),
-        isAdmin: false,
+        isAdmin: faker.datatype.boolean(),
     }));
 
     try {

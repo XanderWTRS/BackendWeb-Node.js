@@ -6,14 +6,43 @@
     <title>API Documentatie</title>
 </head>
 <body>
+    <button onclick="window.location.href='index.html'">Home</button>
     <h1>Task Management API</h1>
     <h2>Beschikbare Endpoints</h2>
     <ul>
+        <h2>Gebruikers Endpoints</h2>
         <li><strong>POST /api/users</strong>: Voeg een nieuwe gebruiker toe.</li>
-        <li><strong>GET /api/users</strong>: Haal alle gebruikers op (met paginering).</li>
+        <li><strong>GET /api/users</strong>: Haal een lijst van gebruikers op (met paginering).</li>
+        <li><strong>GET /api/users/:id</strong>: Haal de details van een specifieke gebruiker op.</li>
+        <li><strong>PUT /api/users/:id</strong>: Werk de gegevens van een specifieke gebruiker bij.</li>
+        <li><strong>DELETE /api/users/:id</strong>: Verwijder een specifieke gebruiker.</li>
+        <li><strong>GET /api/admin/users</strong>: Haal een lijst van alle gebruikers op (admin-only).</li>
+        <li><strong>GET /api/admin/users/search</strong>: Zoek gebruikers op voornaam of admin-status.</li>
+        
+        <h2>Taken Endpoints</h2>
         <li><strong>POST /api/tasks</strong>: Voeg een nieuwe taak toe.</li>
-        <li><strong>GET /api/tasks</strong>: Haal alle taken op (met paginering).</li>
+        <li><strong>GET /api/tasks</strong>: Haal een lijst van alle taken op.</li>
+        <li><strong>GET /api/tasks/user/:user_id</strong>: Haal alle taken op die aan een specifieke gebruiker gekoppeld zijn.</li>
+        <li><strong>PUT /api/tasks/:id</strong>: Werk de details van een taak bij.</li>
+        <li><strong>PUT /api/tasks/:id/status</strong>: Werk de status van een taak bij (open/completed).</li>
+        <li><strong>DELETE /api/tasks/:id</strong>: Verwijder een specifieke taak.</li>
         <li><strong>GET /api/tasks/search</strong>: Zoek taken op titel of status.</li>
+        
+        <h2>Authenticatie Endpoints</h2>
+        <li><strong>POST /api/login</strong>: Log een gebruiker in.</li>
+    </ul>
+
+    <h2>Validatie</h2>
+    <p>De API gebruikt validatie voor zowel gebruikers als taken:</p>
+    <ul>
+        <li><strong>Gebruiker:</strong> Voornaam en achternaam moeten strings zijn zonder cijfers. Email moet geldig zijn. Telefoonnummer moet beginnen met +32 en 9 cijfers bevatten. Wachtwoord moet minimaal 8 tekens lang zijn en voldoen aan specifieke eisen (hoofdletter, kleine letter, cijfer, speciaal teken).</li>
+        <li><strong>Taak:</strong> Titel is verplicht en maximaal 100 tekens. Gebruiker-ID moet geldig zijn. Status moet "open" of "completed" zijn. Einddatum moet na de startdatum liggen.</li>
+    </ul>
+
+    <h2>Voorbeeld Paginering en Zoekopdrachten</h2>
+    <ul>
+        <li><strong>Paginering:</strong> Gebruik de queryparameters <code>limit</code> en <code>offset</code> om een subset van resultaten op te halen. Voorbeeld: <code>/api/users?limit=6&offset=1</code>.</li>
+        <li><strong>Zoeken:</strong> Gebruik queryparameters om resultaten te filteren. Voorbeeld: <code>/api/tasks/search?first_name=xander&isAdmin=ja</code>.</li>
     </ul>
 </body>
 </html>
