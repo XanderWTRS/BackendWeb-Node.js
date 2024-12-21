@@ -36,9 +36,10 @@
                 <label for="password">Wachtwoord:</label>
                 <input type="password" id="password" placeholder="Wachtwoord" required>
         
-                <label for="is-admin">
-                    <input type="checkbox" id="is-admin"> Admin gebruiker?
-                </label>
+                <div class="label-container">
+                    <label for="is-admin">Admin gebruiker?</label>
+                    <input type="checkbox" id="is-admin" name="is-admin">
+                </div>
         
                 <button type="submit">Gebruiker toevoegen</button>
             </form>
@@ -69,10 +70,11 @@
         
                 <label for="update-password">Wachtwoord:</label>
                 <input type="password" id="update-password" placeholder="Wachtwoord">
-        
-                <label for="update-is-admin">
-                    <input type="checkbox" id="update-is-admin"> Admin gebruiker?
-                </label>
+
+                <div class="label-container">
+                    <label for="is-admin">Admin gebruiker?</label>
+                    <input type="checkbox" id="update-is-admin" name="is-admin">
+                </div>
                 
                 <button type="submit">Gebruiker updaten</button>
             </form>

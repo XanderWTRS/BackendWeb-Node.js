@@ -3,7 +3,7 @@ const { faker } = require('@faker-js/faker');
 const bcrypt = require('bcrypt');
 
 async function seedUsers() {
-    const users = Array.from({ length: 30 }, () => ({
+    const users = Array.from({ length: 50 }, () => ({
         first_name: faker.person.firstName(),
         last_name: faker.person.lastName(),
         email: faker.internet.email(),

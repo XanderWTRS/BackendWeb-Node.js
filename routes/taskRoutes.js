@@ -109,8 +109,6 @@ router.put('/tasks/:id/status', async (req, res) => {
     }
 });
 
-
-
 //DELETE
 router.delete('/tasks/:id', async (req, res) => {
     const { id } = req.params;
@@ -152,6 +150,4 @@ router.get('/tasks/search', async (req, res) => {
         res.status(500).json({ error: 'Kon taken niet zoeken.' });
     }
 });
-
-
 module.exports = router;
