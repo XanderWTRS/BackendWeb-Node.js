@@ -1,5 +1,3 @@
-const API_BASE_URL = 'http://localhost:4000/api';
-
 let currentPage = 1;
 const USERS_PER_PAGE = 6;
 let allUsers = []; 
@@ -57,31 +55,30 @@ document.getElementById('edit-task-user-search').addEventListener('input', (e) =
     const searchTerm = e.target.value;
 
     if (searchTerm.length > 0) {
-        const filteredUsers = filterUsers(searchTerm); // Use the same filterUsers function
+        const filteredUsers = filterUsers(searchTerm);
         showEditFilteredUsers(filteredUsers);
     } else {
-        document.getElementById('edit-user-search-results').innerHTML = ''; // Clear results if input is empty
-    }
-});
+        document.getElementById('edit-user-search-results').innerHTML = '';
+}});
 
 function showEditFilteredUsers(filteredUsers) {
     const resultsContainer = document.getElementById('edit-user-search-results');
-    resultsContainer.innerHTML = ''; // Clear previous results
+    resultsContainer.innerHTML = ''; 
 
     filteredUsers.forEach(user => {
         const li = document.createElement('li');
         li.textContent = `${user.first_name} ${user.last_name}`;
-        li.dataset.userId = user.id; // Store the user ID
-        li.addEventListener('click', () => selectEditUser(user)); // Set click listener
+        li.dataset.userId = user.id; 
+        li.addEventListener('click', () => selectEditUser(user)); 
         resultsContainer.appendChild(li);
     });
 }
 
 function selectEditUser(user) {
     const searchInput = document.getElementById('edit-task-user-search');
-    searchInput.value = `${user.first_name} ${user.last_name}`; // Set selected user's name in the input
-    searchInput.dataset.userId = user.id; // Store user ID in dataset
-    document.getElementById('edit-user-search-results').innerHTML = ''; // Clear results
+    searchInput.value = `${user.first_name} ${user.last_name}`; 
+    searchInput.dataset.userId = user.id; 
+    document.getElementById('edit-user-search-results').innerHTML = ''; 
 }
 
 //NIEUWE GEBRUIKER
@@ -242,7 +239,7 @@ async function updateTaskStatus(taskId, currentStatus) {
 
 //ALLE GEKOPPELDE TAKEN
 async function fetchUsers() {
-    const offset = (currentPage - 1) * USERS_PER_PAGE; // Bereken offset op basis van de huidige pagina
+    const offset = (currentPage - 1) * USERS_PER_PAGE; 
     try {
         const response = await fetch(`${API_BASE_URL}/users?limit=${USERS_PER_PAGE}&offset=${offset}`);
         if (!response.ok) {
@@ -252,7 +249,7 @@ async function fetchUsers() {
         const users = await response.json();
 
         const userList = document.getElementById('user-list');
-        userList.innerHTML = ''; // Leeg de lijst voor nieuwe inhoud
+        userList.innerHTML = ''; 
 
         users.forEach((user) => {
             const li = document.createElement('li');
@@ -264,26 +261,20 @@ async function fetchUsers() {
                 <button onclick="deleteUser(${user.id})">Verwijder gebruiker</button>
             `;
 
-            // Maak een ul voor de taken van de gebruiker
             const taskList = document.createElement('ul');
             taskList.id = `tasks-for-user-${user.id}`;
             li.appendChild(taskList);
 
             userList.appendChild(li);
-
-            // Haal de taken voor de gebruiker op
             fetchTasksForUser(user.id);
         });
 
-        renderPaginationButtons(); // Render de paginatieknoppen
+        renderPaginationButtons();
     } catch (error) {
         console.error('Fout bij ophalen gebruikers:', error);
         alert('Er ging iets mis bij het ophalen van gebruikers.');
     }
 }
-
-
-
 
 //TAAK VOOR GEBRUIKER
 async function fetchTasksForUser(userId) {
@@ -321,7 +312,6 @@ async function fetchTasksForUser(userId) {
         alert('Er ging iets mis bij het ophalen van taken.');
     }
 }
-
 
 //VERWIJDER GEBRUIKER
 async function deleteUser(userId) {

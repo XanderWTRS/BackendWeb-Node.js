@@ -7,6 +7,11 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+    <header style="text-align: right; margin: 10px;">
+        <button id="login-button" onclick="redirectToLogin()">LOGIN</button>
+    </header>
+
     <h1>Task Management CRUD</h1>
 
     <div id="user-forms-container">
@@ -121,6 +126,8 @@
         <div id="pagination" style="margin-top: 20px; text-align: center;"></div>
     </section>
 
+    <script src="config.js"></script>
     <script src="crud.js"></script>
+    <script src="auth.js"></script>
 </body>
 </html>

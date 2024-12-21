@@ -3,6 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const userRoutes = require('./routes/userRoutes');
 const taskRoutes = require('./routes/taskRoutes');
+const authRoutes = require('./routes/authRoutes');
 
 (async () => {
     try {
@@ -27,6 +28,12 @@ try {
     app.use('/api', taskRoutes);
 } catch (err) {
     console.error('Error setting up task routes:', err);
+}
+
+try {
+    app.use('/api', authRoutes);
+} catch (err) {
+    console.error('Error setting up auth routes:', err);
 }
 
 const PORT = process.env.PORT || 4000;
