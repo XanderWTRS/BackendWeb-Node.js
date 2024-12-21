@@ -2,15 +2,19 @@ const express = require('express');
 const router = express.Router();
 const db = require('../models/db');
 const { validateUser, validateTask } = require('../middleware/validation');
+const bcrypt = require('bcrypt');
 
 //CREATE
 router.post('/users', validateUser, async (req, res) => {
     const { first_name, last_name, email, phone_number, age, password, isAdmin } = req.body;
 
     try {
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+
         const [result] = await db.query(
             'INSERT INTO users (first_name, last_name, email, phone_number, age, password, isAdmin) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            [first_name, last_name, email, phone_number, age, password, isAdmin]
+            [first_name, last_name, email, phone_number, age, hashedPassword, isAdmin]
         );
         res.status(201).json({ message: 'Gebruiker succesvol toegevoegd.', userId: result.insertId });
     } catch (error) {
