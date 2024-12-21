@@ -11,8 +11,41 @@
     <p>Hier kun je de beheerdersfuncties uitvoeren.</p>
 
     <button onclick="logout()">Uitloggen</button>
+    <button id="sort-button">Sorteer A-Z</button>
+
+    <form id="search-form">
+        <label for="search-first-name">Voornaam:</label>
+        <input type="text" id="search-first-name">
+    
+        <label for="search-is-admin">Is Admin:</label>
+        <select id="search-is-admin">
+            <option value="">Alle</option>
+            <option value="1">Ja</option>
+            <option value="0">Nee</option>
+        </select>
+    
+        <button type="submit">Zoeken</button>
+    </form>
+    
+
+    <table id="user-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Voornaam</th>
+                <th>Achternaam</th>
+                <th>Email</th>
+                <th>Telefoonnummer</th>
+                <th>Leeftijd</th>
+                <th>Admin</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <div id="pagination"></div>
 
     <script src="config.js"></script>
     <script src="auth.js"></script>
+    <script src="userList.js"></script>
 </body>
 </html>

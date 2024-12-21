@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const userRoutes = require('./routes/userRoutes');
 const taskRoutes = require('./routes/taskRoutes');
 const authRoutes = require('./routes/authRoutes');
+const userAdminRoutes = require('./routes/userAdminRoutes');
 
 (async () => {
     try {
@@ -34,6 +35,12 @@ try {
     app.use('/api', authRoutes);
 } catch (err) {
     console.error('Error setting up auth routes:', err);
+}
+
+try {
+    app.use('/api/admin', userAdminRoutes);
+} catch (err) {
+    console.error('Error setting up admin user routes:', err);
 }
 
 const PORT = process.env.PORT || 4000;
