@@ -98,6 +98,8 @@ De API implementeert strikte validatie:
 ## Gebruikte Bronnen:
 - Hoe connecteer je mySQL met node.js en express? https://www.youtube.com/watch?v=W8jySpfRUDY
 - Algemeene kennis? https://canvas.ehb.be/courses/40595
+- [Node.js en NPM](https://nodejs.org/)
+- [MySQL-handleiding](https://dev.mysql.com/doc/)
 
 ## Licentie
 Dit project is beschikbaar onder de MIT-licentie.
