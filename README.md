@@ -2,6 +2,10 @@
 
 Welkom bij de **Task Management API**! Dit project is ontworpen om gebruikers en taken te beheren met diverse endpoints. Het bevat functionaliteiten zoals gebruikersauthenticatie, validatie, paginering en zoekmogelijkheden. Hieronder vind je gedetailleerde instructies om aan de slag te gaan.
 
+![VScode](https://img.shields.io/badge/VScode-v1.96.2-blue?style=for-the-badge&logo=visual-studio-code&logoColor=white&labelColor=000000)
+![Node.js](https://img.shields.io/badge/Node.js-v20.18.1-green?style=for-the-badge&logo=node.js&logoColor=white&labelColor=000000)
+![MySQL](https://img.shields.io/badge/MySQL-v8.0.40-yellow?style=for-the-badge&logo=MySQL&logoColor=white&labelColor=000000)
+
 ## Inhoud
 - [Installatie](#installatie)
 - [Hoe te gebruiken](#hoe-te-gebruiken)
@@ -33,11 +37,11 @@ Welkom bij de **Task Management API**! Dit project is ontworpen om gebruikers en
     ```
 5. Start de server:
     ```bash
-    npm start
+    node app.js
     ```
 
 ## Hoe te gebruiken
-1. Start de server via `npm start`. De API is standaard beschikbaar op `http://localhost:4000`.
+1. Start de server via `node app.js`. De API is standaard beschikbaar op `http://localhost:4000`.
 2. Gebruik een tool zoals [Postman](https://www.postman.com/) of een browser om endpoints te testen.
 3. Raadpleeg de [API Documentatie](./documentatie.html) voor een volledige lijst van endpoints.
 
