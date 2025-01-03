@@ -24,7 +24,7 @@ Welkom bij de **Task Management API**! Dit project is ontworpen om gebruikers en
 
 2. **Navigeer naar de projectmap**:
     ```bash
-    cd Project-Node.js
+    cd BackendWeb-Node.js
     ```
 
 3. **Installeer de benodigde dependencies**:
